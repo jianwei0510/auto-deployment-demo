@@ -1,0 +1,26 @@
+{
+  "name": "auto-deployment-demo",
+  "version": "1.0.0",
+  "description": "Auto deployment display for Openhouse in WUC.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jianwei0510/auto-deployment-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jianwei0510/auto-deployment-demo/issues"
+  },
+  "homepage": "https://github.com/jianwei0510/auto-deployment-demo#readme",
+  "dependencies": {
+    "better-sqlite3": "^12.8.0",
+    "express": "^5.2.1"
+  }
+}

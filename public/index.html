@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>病患看診系統</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: '微軟正黑體', '黑體', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #333;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h2 {
+      font-size: 32px;
+      color: #333;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="time"],
+    textarea {
+      width: 100%;
+      padding: 15px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="time"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .success {
+      background: #4caf50;
+    }
+
+    .success:hover {
+      box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+    }
+
+    .patient-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .patient-item {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 5px solid #667eea;
+      transition: all 0.3s;
+    }
+
+    .patient-item.examined {
+      background: #e8f5e9;
+      border-left-color: #4caf50;
+      opacity: 0.7;
+    }
+
+    .patient-name {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .patient-detail {
+      font-size: 16px;
+      color: #666;
+      margin: 5px 0;
+      line-height: 1.5;
+    }
+
+    .patient-time {
+      font-size: 18px;
+      color: #667eea;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .patient-status {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .patient-status.pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .patient-status.examined {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .examine-btn {
+      background: #ff9800;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      transition: all 0.3s;
+    }
+
+    .examine-btn:hover {
+      background: #f57c00;
+      transform: translateY(-1px);
+    }
+
+    .examine-btn.examined {
+      background: #4caf50;
+    }
+
+    .examine-btn.examined:hover {
+      background: #45a049;
+    }
+
+    .empty-message {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+      font-size: 20px;
+    }
+
+    .message {
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .success-msg {
+      background: #d4edda;
+      color: #155724;
+      border: 2px solid #4caf50;
+    }
+
+    .error-msg {
+      background: #f8d7da;
+      color: #721c24;
+      border: 2px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏥 病患看診系統</h1>
+      <p class="subtitle">簡單、快速、清楚</p>
+    </header>
+
+    <div class="message" id="message"></div>
+
+    <div class="main-content">
+      <!-- 新增患者表單 -->
+      <div class="card">
+        <h2>➕ 新增患者</h2>
+        <form id="addPatientForm">
+          <div class="form-group">
+            <label for="patientName">患者姓名 <span style="color: red;">*</span></label>
+            <input 
+              type="text" 
+              id="patientName" 
+              placeholder="例：王小明" 
+              required
+            >
+          </div>
+          <div class="form-group">
+            <label for="complaint">主訴 <span style="color: red;">*</span></label>
+            <textarea 
+              id="complaint" 
+              placeholder="例：感冒、頭痛、腹瀉" 
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="appointmentTime">看診時間 <span style="color: red;">*</span></label>
+            <input 
+              type="time" 
+              id="appointmentTime" 
+              required
+            >
+          </div>
+          <button type="submit">新增患者</button>
+        </form>
+      </div>
+
+      <!-- 今日看診清單 -->
+      <div class="card">
+        <h2>📋 今日看診清單</h2>
+        <div id="patientList" class="patient-list">
+          <div class="empty-message">暫無患者預約</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    const REFRESH_INTERVAL = 3000; // 每3秒刷新一次
+
+    // 顯示消息
+    function showMessage(message, type = 'success') {
+      const messageEl = document.getElementById('message');
+      messageEl.textContent = message;
+      messageEl.className = `message show ${type === 'success' ? 'success-msg' : 'error-msg'}`;
+      setTimeout(() => {
+        messageEl.classList.remove('show');
+      }, 3000);
+    }
+
+    // 新增患者
+    document.getElementById('addPatientForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('patientName').value.trim();
+      const complaint = document.getElementById('complaint').value.trim();
+      const appointment_time = document.getElementById('appointmentTime').value;
+
+      try {
+        const response = await fetch(`${API_BASE}/patients`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, complaint, appointment_time })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || '新增失敗');
+        }
+
+        showMessage('✅ 患者已成功新增！', 'success');
+        document.getElementById('addPatientForm').reset();
+        loadPatients();
+      } catch (error) {
+        showMessage(`❌ 錯誤: ${error.message}`, 'error');
+      }
+    });
+
+    // 獲取今日患者列表
+    async function loadPatients() {
+      try {
+        const response = await fetch(`${API_BASE}/patients/today`);
+        const patients = await response.json();
+
+        const patientList = document.getElementById('patientList');
+
+        if (patients.length === 0) {
+          patientList.innerHTML = '<div class="empty-message">暫無患者預約</div>';
+          return;
+        }
+
+        patientList.innerHTML = patients.map(patient => `
+          <div class="patient-item ${patient.is_examined ? 'examined' : ''}">
+            <div class="patient-name">${patient.name}</div>
+            <div class="patient-detail">
+              <strong>主訴：</strong>${patient.complaint}
+            </div>
+            <div class="patient-time">⏰ ${patient.appointment_time}</div>
+            <div class="patient-status ${patient.is_examined ? 'examined' : 'pending'}">
+              ${patient.is_examined ? '✅ 已看診' : '⏳ 待看診'}
+            </div>
+            <button 
+              class="examine-btn ${patient.is_examined ? 'examined' : ''}"
+              onclick="toggleExamine(${patient.id}, ${patient.is_examined})"
+            >
+              ${patient.is_examined ? '✅ 已看診' : '標記為已看診'}
+            </button>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('載入患者失敗:', error);
+      }
+    }
+
+    // 標記已看診
+    async function toggleExamine(id, currentStatus) {
+      try {
+        const response = await fetch(`${API_BASE}/patients/${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ is_examined: !currentStatus })
+        });
+
+        if (!response.ok) {
+          throw new Error('更新失敗');
+        }
+
+        loadPatients();
+        showMessage(
+          !currentStatus ? '✅ 標記為已看診' : '⏳ 已取消標記',
+          'success'
+        );
+      } catch (error) {
+        showMessage(`❌ 錯誤: ${error.message}`, 'error');
+      }
+    }
+
+    // 初始加載及定時刷新
+    loadPatients();
+    setInterval(loadPatients, REFRESH_INTERVAL);
+  </script>
+</body>
+</html>
